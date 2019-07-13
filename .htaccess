@@ -1,0 +1,3 @@
+RewriteEngine On
+#The following rule sends all app request to the index.php file which then can run the app accordingly
+RewriteRule ^([^/]+)/? index.php?url=$1 [L,QSA]

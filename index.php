@@ -1,58 +1,90 @@
 <?php 
 
-require 'authenticate.php';
+//NICE TO: update to OAuth 2.0 authentication 
+$dbPass = "letshacktogether"; 
+$secretCode = $_GET['code'];
 
-$inputEmployees = array(
-	'Hanno Renner' => 'Arseniy',
-	'Bruno' => 'Hanno Renner',
-	'Líbene Fernandes' => 'Hanno Renner',
-	'Danang Arbansa Nur' => 'Hanno Renner'
-);
+$inputEmployeesJSON = file_get_contents('input-employees.json');
+$inputEmployees = json_decode($inputEmployeesJSON, true);
 
-//error loop
-//error multiple root 
+function validate_json($jsonFile){
+	//handle error loop and multiple root 	
+	$file = json_decode($jsonFile, true);
 
-$method = $_SERVER['REQUEST_METHOD'];
+	//error duplicated: if one key appears more than once, then the managers are duplicated and it should return an error
 
-echo '<pre>';
-print_r($_SERVER);
-echo '</pre>';
+	$fileUnique = array_unique($file);
 
-function do_sth($method){
-	echo $method;
+	return $treeJSON;
+
 }
 
-switch ($method) {
-  case 'PUT':
-    do_sth($method);  
-    break;
-  case 'POST':
-    do_sth($method);  
-    break;
-  case 'GET':
-    do_sth($method); 
-    $ticketsJSON = file_get_contents('tickets.json');
-    $tickets = json_decode($ticketsJSON, true);
-    $totalScore = 0; 
-    print_r($inputEmployees);
-    break;
-  default:
-    handle_error($method);  
-    break;
-} 
+function convert_to_tree($jsonFile){
+	//assuming that the file is valid adjust that into the desired structure
+	$file = json_decode($jsonFile, true);
+
+	$treeJSON = array();
+
+	$parentID = 0;
+	$childID = 0;
+	foreach ($file as $key => $value) {
+		// echo "<p>" . $key . ": " . $value . " </p>";
+		$treeJSON[$parentID][$value] = $key;
+		$parentID++;
+		//KEEP
+	}
+
+	return $treeJSON;
+}
+
+$inputEmployeesJSON = convert_to_tree($inputEmployeesJSON);
+
+echo "<pre>";
+	print_r($inputEmployeesJSON);
+echo "</pre>";
+
+exit();
+
+if(!isset($secretCode)){
+	http_response_code(401);
+}
+
+switch ($_SERVER['REQUEST_METHOD']) {
+	//API response to each type of request
+  	case 'POST':
+  		if($secretCode == $dbPass){
+
+	    }else{
+			http_response_code(403); // incorrect pass
+		}
+    	
+    	break;
+
+	case 'GET': 
+
+		if($secretCode == $dbPass){
+
+			if($_GET['url'] == 'employees'){
+				$inputEmployeesJSON = file_get_contents('input-employees.json');
+				echo '<pre>';
+		    		print_r($inputEmployeesJSON); 
+		    	echo '</pre>';
+		    }else{
+		    	echo "no";
+		    }
+
+		}else{
+			http_response_code(403); // incorrect pass
+		}
+	    
+	    break;
+
+	default:
+	    // echo 'The app cannot run this type of request. Look at the <a href="https://github.com/brunobme/company-hierarchy/blob/dev/README.md">README.md</a> file for further details';
+	    http_response_code(501);
+	    break;
+}
+
+
 
 ?>
-<!DOCTYPE html>
-
-<head>
-	<title>HR Company hierarchy</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-
-<body>
-	<div id="app">
-		
-	</div>	
-</body>
-
-</html>

@@ -1,7 +1,7 @@
 <?php
 
 $password = $_POST['password'];
-$db_pass = "letshacktogether";
+$db_pass = "letshacktogether"; //
 $authenticated = false;
 
 if($password == $db_pass){
