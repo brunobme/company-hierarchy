@@ -8,7 +8,7 @@ if(!isset($secretCode)){
 	http_response_code(401);
 }
 
-require 'loadEmployees.php';
+require 'load-employees.php';
 
 switch ($_SERVER['REQUEST_METHOD']) {
 	//API response to each type of request
@@ -40,7 +40,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 				if(isset($_GET['name'])){
 					$inputEmployees = json_decode($inputEmployeesJSON, true);
 
-					if(in_array($_GET['name'], $inputEmployees)){
+					if(in_array($_GET['name'], $inputEmployees) || isset($inputEmployees[$_GET['name']])){
 						$employee = $_GET['name'];
 						$supervisor = $inputEmployees[$_GET['name']];
 						$supervisors = $inputEmployees[$supervisor];	
@@ -49,9 +49,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
 						echo "Employee not registered. Please post an updated employees data";
 					}
 				}else{
-					echo '<pre>';
-		    			print_r($inputEmployeesJSON); 
-		    		echo '</pre>';
+		    		print_r($inputEmployeesJSON); 
+		    		
 				}
 				
 				http_response_code(200);
