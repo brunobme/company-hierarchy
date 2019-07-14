@@ -17,10 +17,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
   			$inputEmployeesJSON = file_get_contents("php://input");
   			
   			if(validate_employees_json($inputEmployeesJSON)){
-  				// $inputEmployees = json_decode($inputEmployeesJSON);
-  				// file_put_contents('input-employees.json', $inputEmployeesJSON);	
+  				$inputEmployees = json_decode($inputEmployeesJSON);
+  				file_put_contents('input-employees.json', $inputEmployeesJSON);	
   			}
-  			
   			
 	    }else{
 			http_response_code(403); // incorrect pass
